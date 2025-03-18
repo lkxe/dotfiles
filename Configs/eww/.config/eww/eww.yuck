@@ -1,0 +1,306 @@
+;; ============================================================================
+;; MAIN BAR STRUCTURE
+;; ============================================================================
+(defwidget bar []
+  (box :class "bar"
+    (centerbox :orientation "h"
+      (left)
+      (center)
+      (right)
+    )
+  )
+)
+
+(defwindow bar
+  :monitor 1
+  :windowtype "dock"
+  :geometry (geometry
+    :x "20px"
+    :y "20px"
+    :width "2520px"
+    :height "20px"
+    :anchor "top center")
+  :stacking "bg"
+  :exclusive true
+  :focusable false
+  :class "eww-bar"
+  (bar)
+)
+
+;; ============================================================================
+;; VARIABLES AND POLLS
+;; ============================================================================
+
+;; System status
+(defpoll updates :interval "30s" "scripts/check-updates.sh")
+(defpoll source_muted :interval "1s" "scripts/get-mic-info.sh get-source-mute")
+(defpoll time :interval "0.1s" "date +%H:%M:%S")
+(defpoll date :interval "3600s" "scripts/date-time.sh date")
+
+;; Workspaces
+(deflisten workspaces :initial "[]" "bash ~/.config/eww/scripts/get-workspaces.sh")
+(deflisten current_workspace :initial "1" "bash ~/.config/eww/scripts/get-active-workspace.sh")
+
+;; Music
+(defpoll currentMusic :interval "1s" "echo $(playerctl metadata title) | cut -c 1-50")
+(defpoll play_status :interval "0.5s" :initial "Stopped" "scripts/get-media-status.sh")
+
+;; Menu status
+(defvar startMenuStatus "false")
+(defvar isMenuOpen "false")
+(defvar currentMusicStatus "false")
+
+;; Volume widget
+(defpoll volume :interval "0.01s" "scripts/get-volume.sh get-volume")
+(defpoll sink_muted :interval "0.1s" "scripts/get-volume.sh get-mute")
+(defvar volumeSliderVisible "false")
+
+;; ============================================================================
+;; LEFT SIDE WIDGETS
+;; ============================================================================
+
+(defwidget left []
+  (box :orientation "h"
+       :halign "start"
+       :space-evenly false
+       :spacing 8
+    (startMenu)
+    (workspaces)
+    (music)
+  )
+)
+
+(defwidget startMenu []
+  (box :orientation "h"
+       :halign "start"
+       :space-evenly false
+    (eventbox
+        :class "buttonStyle"
+        :onhover "eww update startMenuStatus=true"
+        :onhoverlost "eww update startMenuStatus=false"
+      (box
+        :class "startMenu"
+        :orientation "h"
+        :space-evenly false
+        (image
+          :class "image"
+          :path "./assets/archlinux.svg"
+          :image-width 20
+          :image-height 20
+        )
+      )
+    )
+  )
+)
+
+(defwidget workspaces []
+  (eventbox :onscroll "bash ~/.config/eww/scripts/change-active-workspace.sh {} ${current_workspace}"
+    (box :space-evenly true
+         :class "workspaces-widget"
+      (label :text "${workspaces}${current_workspace}"
+             :visible false)
+      (for workspace in workspaces
+        (eventbox :onclick "hyprctl dispatch workspace ${workspace.id}"
+          (box
+            :class "workspace-entry"
+            (label
+              :class "workspace-indicator ${workspace.id == current_workspace ? "current" : ""} ${workspace.windows > 0 ? "occupied" : "empty"}"
+              :text "${workspace.id == current_workspace ? "◆" : "◇"}"
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+(defwidget music []
+  (eventbox
+      :onhover "eww update currentMusicStatus=true"
+      :onhoverlost "eww update currentMusicStatus=false"
+    (box
+      :class "music buttonStyle"
+      :orientation "h"
+      :space-evenly false
+      (label
+        :class "musicLabel"
+        :text "${currentMusic != "" ? "󰝚 " : "󰝛 "}")
+      (label
+        :class "music-title"
+        :limit-width 30
+        :text "${currentMusic != "" ? currentMusic : "Not playing"}"
+      )
+    )
+  )
+)
+
+;; ============================================================================
+;; CENTER WIDGETS
+;; ============================================================================
+
+(defwidget center []
+  (box :orientation "h"
+       :halign "center"
+    (cal)
+  )
+)
+
+(defwidget cal []
+  (box :class "cal"
+    :orientation "h"
+    :space-evenly false
+    :halign "start"
+    :spacing 6
+    (button
+      :class "clockb"
+      " ${date}")
+  )
+)
+
+;; ============================================================================
+;; RIGHT SIDE WIDGETS
+;; ============================================================================
+
+(defwidget right []
+  (box
+    :orientation "h"
+    :halign "end"
+    :space-evenly false
+    :spacing 5
+    (network_widget)
+    (pacman_updates)
+    (volume_widget)
+    (mic_widget)
+    (media_controls)
+    (systray_widget)
+    (clock)
+  )
+)
+
+;; Network speed variables - add to your VARIABLES AND POLLS section
+(defpoll network_down :interval "1s" "scripts/get-network.sh down")
+(defpoll network_up :interval "1s" "scripts/get-network.sh up")
+(defvar networkWidgetHover "false")
+
+;; Network speed widget
+(defwidget network_widget []
+  (eventbox :onhover "eww update networkWidgetHover=true"
+            :onhoverlost "eww update networkWidgetHover=false"
+    (box :class "network-widget buttonStyle"
+         :space-evenly false
+         :spacing 4
+      (box :class "network-down"
+           :space-evenly false
+           :spacing 2
+        (label :class "network-icon down-icon"
+               :text "󰇚")
+        (label :class "network-text"
+               :text "${network_down}"))
+      (box :class "network-up"
+           :space-evenly false
+           :spacing 2
+        (label :class "network-icon up-icon"
+               :text "󰕒")
+        (label :class "network-text"
+               :text "${network_up}"))
+      (revealer :transition "slideright"
+                :reveal networkWidgetHover
+                :duration "300ms"
+        (label :class "network-interface"
+               :text " (${EWW_NET.names[0]})")))))
+
+(defwidget pacman_updates []
+  (eventbox
+    :cursor "pointer"
+    :onclick "bash ~/.config/eww/scripts/run-update.sh"
+    (box
+      :class "pacman-updates ${updates == '0' ? 'no-updates' : 'has-updates'} buttonStyle"
+      :orientation "h"
+      :space-evenly false
+      :spacing 4
+      (label
+        :class "pacman-icon"
+        :text "󰮯")
+      (label
+        :class "updates-count"
+        :visible {updates != "0"}
+        :text "${updates}")
+    )
+  )
+)
+
+;; Volume widget
+(defwidget volume_widget []
+  (eventbox :onscroll "scripts/get-volume.sh change-volume {}"
+            :onhover "eww update volumeSliderVisible=true"
+            :onhoverlost "eww update volumeSliderVisible=false"
+    (box :class "volume-widget buttonStyle ${sink_muted == 'yes' ? 'volume-muted' : ''}"
+         :space-evenly false
+         :spacing 4
+      (button :onclick "scripts/get-volume.sh toggle-mute"
+              :class "volume-icon-btn"
+        (label :class "volume-icon"
+               :text {sink_muted == "yes" ? "󰝟" :
+                     volume == 0 ? "󰝟" : "󰕾"}))
+      (label :class "volume-text"
+             :text "${volume}%")
+      (revealer :transition "slideright"
+                :reveal volumeSliderVisible
+                :duration "300ms"
+        (box :class "slider-container"
+          (scale :class "volume-slider"
+                 :value volume
+                 :min 0
+                 :max 101  ;; Setting max to 101 is a trick to ensure 100% is reachable
+                 :round-digits 0
+                 :onchange "scripts/get-volume.sh set-volume {}"))))))
+
+(defwidget mic_widget []
+  (button :onclick "scripts/get-mic-info.sh toggle-source-mute"
+          :class "buttonStyle ${source_muted == 'yes' ? 'mic-widget-muted' : 'mic-widget'}"
+    (label :text {source_muted == "yes" ? "󰍭" : "󰍬"})
+  )
+)
+
+(defwidget media_controls []
+  (box :class "media-controls buttonStyle"
+       :space-evenly false
+       :spacing 8
+       :visible {currentMusic != ""}
+    (button :onclick "playerctl previous"
+            :class "media-btn control"
+            "󰒮")
+    (button :onclick "playerctl play-pause"
+            :class "media-btn ${play_status == 'Playing' ? 'pause' : 'play'}"
+            ;; {play_status == "Playing" ? "󰏧" : "󰐊"})
+            ;; Alternative pause icons:
+            {play_status == "Playing" ? "󰏥" : "󰐊"})
+            ;; {play_status == "Playing" ? "" : "󰐊"})
+            ;; {play_status == "Playing" ? "󰏦" : "󰐊"})
+    (button :onclick "playerctl next"
+            :class "media-btn control"
+            "󰒭")
+  )
+)
+
+(defwidget systray_widget []
+  (box :class "systray"
+       :orientation "h"
+       :space-evenly false
+       :spacing 8
+    (systray :icon-size 16
+             :spacing 8)
+  )
+)
+
+(defwidget clock []
+  (box :class "clock"
+    :orientation "h"
+    :space-evenly true
+    :halign "end"
+    :spacing 6
+    (button
+      :class "clockb"
+      "${time} ")
+  )
+)

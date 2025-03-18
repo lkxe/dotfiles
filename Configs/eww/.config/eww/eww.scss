@@ -1,0 +1,408 @@
+$background: rgba(21, 22, 36, 0.4);
+$background_full: rgba(21, 22, 36, 1);
+$foreground: rgba(32, 30, 40, 0.75);
+
+$gray: #414868;
+$text: #a9b1d6;
+$color1: #bb9af7; // purple
+$color2: #ff9e64; // orange
+$color3: #7aa2f7; // blue
+$color4: #73daca; // cyan/teal
+$color5: #2ac3de; // azure
+$color6: #7dcfff; // light blue
+$color7: #9ece6a; // green
+$color8: #f7768e; // red
+$color9: #a9b1d6; // subtle lighter blue/gray
+$color10: #414868; // dark gray
+$radius: 0px;
+
+* {
+    all: unset;
+    font-family: "Hack Nerd Font Mono", monospace;
+    font-weight: bold;
+}
+
+.bar {
+    background-color: $background;
+    background: $background;
+    box-shadow: 1px 2px 10px $background;
+    padding: 4px;
+    border-radius: $radius;
+}
+
+// Start Menu
+.startMenu {
+    padding: 0 10px;
+    font-weight: 700;
+    color: $text;
+}
+
+// Clock
+.clock {
+    color: $color9;
+}
+
+// Music
+.music {
+    color: $color9;
+
+    .musicLabel {
+        color: $color9;
+        padding: 0 0px;
+        font-size: 20px;
+    }
+}
+
+// Cal
+.cal {
+    color: $color9;
+}
+
+// Button Style
+.buttonStyle {
+    border-radius: $radius;
+    padding: 0 8px;
+}
+
+// Workspaces
+.workspaces-widget {
+    padding: 0px;
+    border-radius: $radius;
+    margin: 0;
+}
+
+.workspace-entry {
+    margin: 0;
+    padding: 0;
+    transition: color 1s ease-in-out;
+    min-height: 20px;
+    padding-bottom: 2px;
+}
+
+.workspace-indicator {
+    margin: 0;
+    padding: 0 4px 0 0;
+    margin-top: -2px;
+}
+
+.empty {
+    color: $color9;
+    font-size: 1.4em;
+}
+
+.occupied {
+    color: white;
+    font-size: 1.4em;
+}
+
+.current {
+    color: $color3;
+    font-size: 1.4em;
+}
+
+// Systray styling
+.systray {
+    padding: 0 5px;
+    padding-top: 1px;
+
+    // Basic container styling
+    background-color: transparent;
+    color: $text;
+
+    // Style for individual tray icons
+    image {
+        margin: 0 2px;
+        padding: 0;
+    }
+}
+
+// Context menus and dropdown styling
+menu {
+    background-color: $background_full; // Darker, more opaque background
+    border: 1px solid $color10;
+    border-radius: $radius;
+    padding: 3px 0; // Reduced padding
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); // Stronger shadow
+
+    // Menu items
+    menuitem {
+        color: #ffffff; // Brighter text color for better contrast
+        padding: 4px 8px; // Reduced padding for more compact menu
+        font-size: 12px; // Smaller font size
+        margin: 1px 0; // Small margin between items
+
+        &:hover {
+            background-color: $color3;
+            color: #ffffff;
+            font-weight: bold; // Bold on hover for better visibility
+        }
+
+        &:active {
+            background-color: $color5;
+        }
+
+        // For disabled menu items
+        &:disabled {
+            color: rgba(160, 160, 180, 0.5); // Lighter but still visible
+        }
+    }
+
+    // Menu separators
+    separator {
+        background-color: rgba(100, 100, 150, 0.3); // More visible separator
+        margin: 2px 0;
+        min-height: 1px;
+    }
+
+    // Submenus
+    menu {
+        border-radius: $radius;
+        padding: 2px 0;
+    }
+
+    // Menu item label
+    label {
+        color: #ffffff; // Brighter text for better contrast
+        padding: 0;
+        font-weight: normal;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3); // Text shadow for better readability
+    }
+
+    // Checkbox/radio items in menu
+    check,
+    radio {
+        margin: 0 6px 0 0; // Smaller margin
+        min-height: 14px; // Smaller size
+        min-width: 14px;
+
+        &:checked {
+            background-color: $color3;
+            border-color: $color3;
+        }
+    }
+
+    // Arrow for submenu indicators
+    arrow {
+        color: #ffffff; // Brighter color
+        margin-right: 2px;
+
+        &:dir(ltr) {
+            margin-right: 0;
+            margin-left: 4px; // Smaller margin
+        }
+    }
+}
+
+// Tooltips with improved contrast
+tooltip {
+    background-color: rgba(15, 15, 25, 0.95); // Darker, more opaque background
+    border: 1px solid $color10;
+    border-radius: $radius;
+
+    label {
+        color: #ffffff; // Brighter text
+        padding: 3px 6px; // Smaller padding
+        font-size: 11px; // Smaller font
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3); // Text shadow for better readability
+    }
+}
+
+// Media Controls
+.media-controls {
+    background-color: transparent;
+    padding: 0 2px;
+
+    .media-btn {
+        padding: 0 3px;
+        color: $color9;
+        transition: all 0.2s ease;
+
+        &:hover {
+            color: $color9;
+        }
+
+        &.play {
+            font-size: 16px;
+            color: $color3;
+
+            &:hover {
+                color: $color9;
+            }
+        }
+
+        &.pause {
+            font-size: 20px;
+            padding-top: 1px;
+            color: $color3;
+        }
+
+        &.control {
+            padding-top: 1px;
+            font-size: 20px;
+        }
+    }
+}
+
+.mic-widget {
+    padding-top: 2px;
+    font-size: 17px;
+    color: $color9;
+}
+
+.mic-widget-muted {
+    font-size: 21px;
+    color: $color8;
+}
+
+.pacman-updates {
+    padding: 0 6px;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+}
+
+.pacman-icon {
+    font-size: 1.4em;
+    margin-right: 2px;
+}
+
+.has-updates {
+    background-color: rgba(255, 204, 0, 0.2);
+}
+
+.has-updates:hover {
+    background-color: rgba(255, 204, 0, 0.4);
+}
+
+.has-updates .pacman-icon {
+    color: #ffcc00; /* Pacman yellow */
+}
+
+.no-updates .pacman-icon {
+    color: $color9;
+}
+
+.updates-count {
+    font-weight: bold;
+    color: #ffcc00; /* Pacman yellow */
+}
+
+// Volume widget styling - add to your eww.scss file
+.volume-widget {
+    color: $color9;
+    margin-top: 1px;
+    margin-right: -6px;
+
+    .volume-icon-btn {
+        padding: 0;
+    }
+
+    .volume-icon {
+        font-size: 22px;
+        padding: 0;
+    }
+
+    .volume-text {
+        margin: 0 2px;
+    }
+
+    .slider-outer-container {
+        margin: 0;
+        padding: 0;
+    }
+
+    // Styling for the slider
+    .slider-container {
+        margin: 0;
+        padding: 0 6px;
+    }
+
+    .volume-slider {
+        min-width: 70px;
+
+        trough {
+            min-height: 6px;
+            background-color: $color10;
+            border-radius: 3px;
+            margin: 0;
+        }
+
+        highlight {
+            min-height: 6px;
+            background-color: $color3;
+            border-radius: 3px;
+        }
+
+        slider {
+            min-height: 12px;
+            min-width: 12px;
+            background-color: $color3;
+            border-radius: 6px;
+            border: none;
+            margin: -4px;
+
+            &:hover {
+                background-color: lighten($color3, 10%);
+            }
+        }
+    }
+}
+
+.volume-muted {
+    .volume-icon {
+        color: $color8;
+    }
+
+    .volume-text {
+        color: $color8;
+    }
+
+    .volume-slider {
+        highlight {
+            background-color: $color8;
+        }
+
+        slider {
+            background-color: $color8;
+
+            &:hover {
+                background-color: lighten($color8, 10%);
+            }
+        }
+    }
+}
+
+// Network widget styling - add to your eww.scss file
+.network-widget {
+    padding: 0 8px;
+    color: $color9;
+
+    .network-down,
+    .network-up {
+        margin: 0 2px;
+    }
+
+    .network-icon {
+        font-size: 16px;
+        margin-right: 2px;
+    }
+
+    .down-icon {
+        color: $color3; // Blue for download
+    }
+
+    .up-icon {
+        color: $color7; // Green for upload
+    }
+
+    .network-text {
+        font-size: 14px;
+        min-width: 56px;
+    }
+
+    .network-interface {
+        color: $color9;
+        opacity: 0.8;
+        font-size: 12px;
+        margin-left: 2px;
+    }
+}
