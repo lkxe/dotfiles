@@ -13,8 +13,6 @@ setopt PUSHD_IGNORE_DUPS    # Do not store duplicates in the stack
 setopt PUSHD_SILENT         # Do not print the directory stack after pushd or popd
 
 # Shell options
-setopt CORRECT
-setopt CORRECT_ALL
 setopt INTERACTIVE_COMMENTS
 
 # Theme configuration
@@ -85,6 +83,11 @@ alias mv='mv -i'                          # Confirm before overwriting
 alias rm='rm -i'                          # Confirm before deletion
 alias zshconfig="$EDITOR ~/.zshrc"        # Quick edit of zshrc
 alias zshreload="source ~/.zshrc"         # Quick reload of zshrc
+alias zed="zeditor"
 
 # Display fastfetch on terminal startup
 fastfetch
+
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_CONFIG_HOME="$HOME/.config"
+export PATH="/home/lukas/.cache/.bun/bin:$PATH"
