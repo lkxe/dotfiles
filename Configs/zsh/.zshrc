@@ -1,93 +1,189 @@
+# =============================================================================
+# ENVIRONMENT VARIABLES
+# =============================================================================
+
+# Path configuration
+export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+# Set default editor
+export EDITOR='nvim'
+export VISUAL='nvim'
+
 # History configuration
+HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
-HISTFILE=~/.zsh_history
-setopt HIST_IGNORE_ALL_DUPS  # Don't record duplicates
-setopt HIST_FIND_NO_DUPS     # Don't show duplicates in search
-setopt HIST_SAVE_NO_DUPS     # Don't write duplicate entries to history file
-setopt SHARE_HISTORY         # Share history between sessions
+setopt HIST_IGNORE_ALL_DUPS  # Don't save duplicates
+setopt HIST_SAVE_NO_DUPS     # Don't write duplicates
+setopt HIST_REDUCE_BLANKS    # Remove unnecessary blanks
+setopt INC_APPEND_HISTORY    # Immediately append to history file
+setopt EXTENDED_HISTORY      # Record timestamp in history
 
-# Directory options
-setopt AUTO_PUSHD           # Push the current directory visited onto the stack
-setopt PUSHD_IGNORE_DUPS    # Do not store duplicates in the stack
-setopt PUSHD_SILENT         # Do not print the directory stack after pushd or popd
+# =============================================================================
+# ZINIT INSTALLATION & CONFIGURATION
+# =============================================================================
 
-# Shell options
-setopt INTERACTIVE_COMMENTS
-
-# Theme configuration
-ZSH_THEME="alanpeabody"
-
-# Custom themes and plugins path
-export ZSH="$HOME/.oh-my-zsh"
-
-### Zinit installer and configuration
+# Load Zinit if it doesn't exist, install it
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
-    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
-    command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
-    command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
-        print -P "%F{33} %F{34}Installation successful.%f%b" || \
-        print -P "%F{160} The clone has failed.%f%b"
+  print -P "%F{33}▓▒░ %F{220}Installing DHARMA Initiative Plugin Manager (zdharma/zinit)…%f"
+  command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
+  command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
+    print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
+    print -P "%F{160}▓▒░ The clone has failed.%f%b"
 fi
 
 source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
-# Load zinit annexes
-zinit light-mode for \
-    zdharma-continuum/zinit-annex-as-monitor \
-    zdharma-continuum/zinit-annex-bin-gem-node \
-    zdharma-continuum/zinit-annex-patch-dl \
-    zdharma-continuum/zinit-annex-rust
+# =============================================================================
+# PLUGINS
+# =============================================================================
 
-# Load Oh-My-Zsh first for theme support
-source $ZSH/oh-my-zsh.sh
+# Essential plugins
+zinit light zsh-users/zsh-autosuggestions      # Fish-like autosuggestions
+zinit light zsh-users/zsh-completions          # Additional completion definitions
 
-# Load Oh-My-Zsh plugins via zinit
-zinit wait lucid for \
-    OMZP::git \
-    OMZP::colored-man-pages \
-    OMZP::command-not-found \
-    OMZP::z
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 
-# Load custom plugins with turbo mode
-zinit wait lucid for \
-    atinit"zicompinit; zicdreplay" \
-        zdharma-continuum/fast-syntax-highlighting \
-    atload"bindkey '^[[A' history-substring-search-up; bindkey '^[[B' history-substring-search-down" \
-        zsh-users/zsh-history-substring-search \
-    blockf \
-        zsh-users/zsh-completions \
-    atload"!_zsh_autosuggest_start" \
-        zsh-users/zsh-autosuggestions
+# Ensure completion styling doesn't override our autosuggestion colors
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*:default' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu select=0
 
-# Key bindings
-bindkey '^[[3~' delete-char
-bindkey '^[[H' beginning-of-line
-bindkey '^[[F' end-of-line
+# Load fzf for fuzzy finding
+zinit ice from"gh-r" as"program"
+zinit light junegunn/fzf
 
-# Auto-completion improvements
+# fzf-tab for enhanced tab completion with fzf
+zinit light Aloxaf/fzf-tab
+
+# zsh-autopair for auto-closing quotes and brackets
+zinit light hlissner/zsh-autopair
+
+# Directory navigation
+zinit light agkozak/zsh-z
+
+# =============================================================================
+# FZF CONFIGURATION
+# =============================================================================
+
+# fzf keybindings and completion
+zinit snippet OMZP::fzf
+
+# fzf options
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --preview 'bat --color=always --style=numbers --line-range=:500 {}'"
+export FZF_DEFAULT_COMMAND="fd --type file --color=always --hidden --follow --exclude .git"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type directory --color=always --hidden --follow --exclude .git"
+
+# =============================================================================
+# STARSHIP PROMPT
+# =============================================================================
+
+# Initialize Starship prompt if installed
+if command -v starship &> /dev/null; then
+  eval "$(starship init zsh)"
+else
+  echo "Starship is not installed. Install it with 'sudo pacman -Syu starship'"
+fi
+
+# =============================================================================
+# ZSH OPTIONS
+# =============================================================================
+
+# Basic auto/tab completion
+autoload -Uz compinit
+compinit -d ~/.cache/zcompdump
 zstyle ':completion:*' menu select
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'  # Case insensitive tab completion
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"    # Colored completion
-zstyle ':completion:*' rehash true                         # Automatically find new executables
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*:descriptions' format '%F{yellow}[%d]%f'
+zstyle ':completion:*:messages' format '%F{purple}%d%f'
+zstyle ':completion:*:warnings' format '%F{red}No matches for: %d%f'
+zstyle ':completion:*:corrections' format '%F{green}%d (errors: %e)%f'
+zstyle ':completion:*' group-name ''
 
-# Useful aliases
+# Useful options
+setopt AUTO_CD              # cd by typing directory name
+setopt AUTO_PUSHD           # Push the current directory onto the stack
+setopt PUSHD_IGNORE_DUPS    # Do not store duplicates in the stack
+setopt PUSHD_SILENT         # Do not print directory stack
+setopt COMPLETE_IN_WORD     # Complete from both ends of a word
+setopt ALWAYS_TO_END        # Move cursor to end of word after completion
+
+# =============================================================================
+# ALIASES
+# =============================================================================
+
+# Navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# List directories
 alias ls='ls --color=auto'
-alias ll='ls -lah'
-alias la='ls -A'
-alias grep='grep --color=auto'
-alias cp='cp -i'                          # Confirm before overwriting
-alias mv='mv -i'                          # Confirm before overwriting
-alias rm='rm -i'                          # Confirm before deletion
-alias zshconfig="$EDITOR ~/.zshrc"        # Quick edit of zshrc
-alias zshreload="source ~/.zshrc"         # Quick reload of zshrc
-alias zed="zeditor"
+alias ll='ls -lh'
+alias la='ls -lha'
 
-# Display fastfetch on terminal startup
+# Git shortcuts
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git pull'
+alias gd='git diff'
+alias gco='git checkout'
+alias gb='git branch'
+alias glo='git log --oneline --graph --decorate'
+
+# Misc
+alias zed='zeditor'
+alias zshrc='$EDITOR ~/.zshrc'
+alias reload='source ~/.zshrc'
+
+# =============================================================================
+# KEY BINDINGS
+# =============================================================================
+
+# Set emacs keybindings
+bindkey -e
+
+# Use built-in zsh history search with better keybindings
+bindkey '^[[A' up-line-or-search                    # Up arrow for history search
+bindkey '^[[B' down-line-or-search                  # Down arrow for history search
+bindkey '^P' up-line-or-search                      # Ctrl+P for history search
+bindkey '^N' down-line-or-search                    # Ctrl+N for history search
+bindkey '^R' history-incremental-search-backward    # Ctrl+R for incremental history search
+
+# History search keybindings (built-in alternative)
+bindkey '^[[A' up-line-or-search
+bindkey '^[[B' down-line-or-search
+bindkey "$terminfo[kcuu1]" up-line-or-search
+bindkey "$terminfo[kcud1]" down-line-or-search
+
+# Word navigation with Ctrl+Left/Right
+bindkey '^[[1;5D' backward-word
+bindkey '^[[1;5C' forward-word
+
+# Alt+Left/Right as fallback for some terminals
+bindkey '^[[1;3D' backward-word
+bindkey '^[[1;3C' forward-word
+
+# Standard sequences often used by many terminals
+bindkey '^[^[[D' backward-word
+bindkey '^[^[[C' forward-word
+
+# Ctrl+Space to accept suggestion
+bindkey '^ ' autosuggest-accept
+
+# More custom configurations (tbd)
+# =============================================================================
+
+# Load local configuration if exists
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
+# Finished all the boring stuff, now show the cool stuff :)
 fastfetch
-
-export XDG_CACHE_HOME="$HOME/.cache"
-export XDG_CONFIG_HOME="$HOME/.config"
-export PATH="/home/lukas/.cache/.bun/bin:$PATH"
