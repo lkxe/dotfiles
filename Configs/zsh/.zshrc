@@ -123,10 +123,39 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 
+# System shortcuts
+alias df='df -h'
+alias du='du -h'
+alias free='free -m'
+alias mkdir='mkdir -p'
+alias path='echo -e ${PATH//:/\\n}'
+
+# Network shortcuts
+alias ports='netstat -tulanp'
+alias myip='curl http://ipecho.net/plain; echo'
+
 # List directories
 alias ls='ls --color=auto'
 alias ll='ls -lh'
 alias la='ls -lha'
+
+# General Docker commands
+alias d='docker'
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+alias drm='docker rm'
+
+# Docker Compose shortcuts
+alias dc='docker-compose'
+alias dcup='docker-compose up'
+alias dcupd='docker-compose up -d'
+alias dcd='docker-compose down'
+alias dcr='docker-compose restart'
+alias dclogs='docker-compose logs'
+alias dcps='docker-compose ps'
+
+# Docker Build
+alias dbuild='docker build -t'
 
 # Git shortcuts
 alias gs='git status'
@@ -143,6 +172,9 @@ alias glo='git log --oneline --graph --decorate'
 alias zed='zeditor'
 alias zshrc='$EDITOR ~/.zshrc'
 alias reload='source ~/.zshrc'
+alias mvc='mullvad connect'
+alias mvd='mullvad disconnect'
+alias speed='speedtest-cli'
 
 # =============================================================================
 # KEY BINDINGS
@@ -157,6 +189,8 @@ bindkey '^[[B' down-line-or-search                  # Down arrow for history sea
 bindkey '^P' up-line-or-search                      # Ctrl+P for history search
 bindkey '^N' down-line-or-search                    # Ctrl+N for history search
 bindkey '^R' history-incremental-search-backward    # Ctrl+R for incremental history search
+
+bindkey '^[[3~' delete-char                         # Delete
 
 # History search keybindings (built-in alternative)
 bindkey '^[[A' up-line-or-search
