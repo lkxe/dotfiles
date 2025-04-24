@@ -1,4 +1,4 @@
-$background: rgba(26, 27, 38, 0.5);
+$background: rgba(26, 27, 38, 0.4);
 $background_transparent: rgba(26, 27, 38, 0.1);
 $background_full: rgba(21, 22, 36, 0.6);
 $foreground: rgba(32, 30, 40, 0.75);
@@ -24,8 +24,8 @@ $radius: 0px;
 }
 
 .bar {
-    background-color: $background_transparent;
-    background: $background_transparent;
+    background-color: $background;
+    background: $background;
     box-shadow: 1px 2px 10px $background;
     padding: 4px;
     border-radius: $radius;
@@ -93,7 +93,7 @@ $radius: 0px;
 
 .occupied {
     // color: #f7768e;
-    color: rgba($color3, 0.6);
+    color: $color3;
     font-size: 1.4em;
 }
 
