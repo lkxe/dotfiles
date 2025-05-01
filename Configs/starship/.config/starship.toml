@@ -1,0 +1,121 @@
+# ~/.config/starship.toml
+# Simple, blue-themed and elegant Starship prompt configuration
+
+# Use a new line for the prompt with git branch on the right
+format = """
+$username$hostname$directory$python$nodejs$rust$golang$fill$git_status$git_branch
+$character"""
+
+# Don't print a new line at the start of the prompt
+add_newline = true
+
+# Add a filler to push content to the right side
+[fill]
+symbol = " "
+style = "bold blue"
+
+# Replace the "❯" symbol with "→" for the prompt character
+[character]
+success_symbol = "[→](bold blue)"
+error_symbol = "[→](bold blue)"
+vimcmd_symbol = "[←](bold blue)"
+
+# Display current directory
+[directory]
+style = "bold blue"
+truncation_length = 3
+truncation_symbol = "…/"
+read_only = " 🔒"
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+# Hide the username and hostname unless in SSH
+[username]
+show_always = true
+style_user = "bold blue"
+style_root = "bold red"
+format = "[$user]($style)@"
+
+[hostname]
+ssh_only = false
+format = "[$hostname](bold gray) "
+disabled = false
+
+# Display git branch on the right side
+[git_branch]
+symbol = " "
+style = "bold blue"
+format = "[$symbol$branch]($style)"
+truncation_length = 20
+truncation_symbol = "…"
+
+# Display git status
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style))'
+style = "bold cyan"
+conflicted = "🏳"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?"
+stashed = "$"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+# Programming languages - simplified to only show icons without versions
+[python]
+symbol = " "
+style = "bold blue"
+format = '[$symbol]($style)'
+detect_extensions = ["py"]
+version_format = ""
+
+[nodejs]
+symbol = " "
+style = "bold blue"
+format = '[$symbol]($style)'
+detect_extensions = ["js", "jsx", "ts", "tsx"]
+version_format = ""
+
+[rust]
+symbol = " "
+style = "bold blue"
+format = '[$symbol]($style)'
+detect_extensions = ["rs"]
+version_format = ""
+
+[golang]
+symbol = " "
+style = "bold blue"
+format = '[$symbol]($style)'
+detect_extensions = ["go"]
+version_format = ""
+
+# Disable command duration
+[cmd_duration]
+disabled = true
+
+# Time
+[time]
+disabled = true
+
+# Battery
+[battery]
+disabled = true
+
+# Package version
+[package]
+disabled = true
+
+# AWS
+[aws]
+disabled = true
+
+# Docker
+[docker_context]
+disabled = true
+
+# Terraform
+[terraform]
+disabled = true
