@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Default sink name - usually this is the default audio output
 DEFAULT_SINK="@DEFAULT_AUDIO_SINK@"
 
@@ -50,11 +49,13 @@ set_volume() {
     percentage=100
   fi
 
-  # Convert percentage to decimal (0.0 to 1.0) as wpctl expects
-  local decimal=$(echo "scale=2; $percentage/100" | bc)
+  # Use direct percentage notation which is more reliable
+  wpctl set-volume $DEFAULT_SINK "${percentage}%"
 
-  # Set volume to the calculated percentage
-  wpctl set-volume $DEFAULT_SINK $decimal
+  # Force unmute if setting volume above 0
+  if [ "$percentage" -gt 0 ]; then
+    wpctl set-mute $DEFAULT_SINK 0
+  fi
 }
 
 # Main command handling
@@ -79,5 +80,11 @@ case "$1" in
     exit 1
     ;;
 esac
+
+# After any volume operation, output current volume to help with debugging
+if [ "$1" = "set-volume" ] || [ "$1" = "change-volume" ] || [ "$1" = "toggle-mute" ]; then
+  sleep 0.1  # Small delay to ensure volume change takes effect
+  get_volume  # Output the new volume
+fi
 
 exit 0

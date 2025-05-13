@@ -51,8 +51,8 @@
 (defvar currentMusicStatus "false")
 
 ;; Volume widget
-(defpoll volume :interval "0.01s" "scripts/get-volume.sh get-volume")
-(defpoll sink_muted :interval "0.1s" "scripts/get-volume.sh get-mute")
+(defpoll volume :interval "0.1s" :initial 0 `scripts/get-volume.sh get-volume`)
+(defpoll sink_muted :interval "0.1s" :initial "no" `scripts/get-volume.sh get-mute`)
 (defvar volumeSliderVisible "false")
 
 ;; ============================================================================
