@@ -1,0 +1,42 @@
+sort=-time
+layer=overlay
+width=270
+height=100
+border-size=2
+border-radius=6
+border-color=#7aa2f7
+background-color=#1a1b26
+text-color=#c0caf5
+padding=20,20
+icons=0
+max-icon-size=64
+default-timeout=5000
+ignore-timeout=1
+font=Sans 10
+
+# Critical notifications with red accent
+[urgency=critical]
+border-color=#f7768e
+background-color=#1a1b26
+text-color=#f7768e
+
+# Low urgency notifications with muted colors
+[urgency=low]
+border-color=#565f89
+background-color=#1a1b26
+text-color=#9aa5ce
+
+# Special case for 'lol' notifications
+[app-name=lol]
+layer=overlay
+history=0
+border-color=#bb9af7
+background-color=#1a1b26
+
+# Do not disturb mode settings
+[mode=do-not-disturb]
+invisible=1
+
+# Exception for lol notifications in do-not-disturb mode
+[mode=do-not-disturb app-name=lol]
+invisible=0

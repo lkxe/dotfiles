@@ -19,52 +19,58 @@
     {
       "type": "title",
       "color": {
-        "user": "34", // = color2
-        "at": "34",
-        "host": "29",
+        "user": "blue", // = color2
+        "at": "blue",
+        "host": "white",
       },
     },
     "break",
     {
       "type": "os",
       "key": " ",
-      "keyColor": "34", // = color3
+      "keyColor": "blue", // = color3
     },
     {
       "type": "kernel",
       "key": " ",
-      "keyColor": "34",
+      "keyColor": "blue",
     },
     {
       "type": "packages",
       "format": "{} (pacman)",
       "key": " ",
-      "keyColor": "34",
+      "keyColor": "blue",
     },
     {
       "type": "shell",
       "key": " ",
-      "keyColor": "34",
+      "keyColor": "blue",
     },
     {
       "type": "terminal",
       "key": " ",
-      "keyColor": "34",
+      "keyColor": "blue",
     },
     {
       "type": "wm",
       "key": " ",
-      "keyColor": "34",
+      "keyColor": "blue",
     },
     {
       "type": "uptime",
       "key": " ",
-      "keyColor": "34",
+      "keyColor": "blue",
+    },
+    {
+      "type": "command",
+      "key": "󱦟 ",
+      "keyColor": "blue",
+      "text": "birth_install=$(stat -c %W /); current=$(date +%s); time_progression=$((current - birth_install)); days_difference=$((time_progression / 86400)); echo $days_difference days",
     },
     {
       "type": "media",
       "key": "󰝚 ",
-      "keyColor": "34",
+      "keyColor": "blue",
     },
     "break",
     {
